@@ -12,3 +12,7 @@ BOARD_VENDOR_QCOM_LOC_PDK_FEATURE_SET := true
 
 # Time services
 BOARD_USES_QC_TIME_SERVICES := true
+
+# Telephony
+TARGET_PROVIDES_TELEPHONY_EXT := true
+
