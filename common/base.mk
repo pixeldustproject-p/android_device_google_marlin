@@ -651,7 +651,6 @@ PRODUCT_PACKAGES := \
     Music \
     Phone \
     Provision \
-    QuickSearchBox \
     Settings \
     Sync \
     SystemUI \
