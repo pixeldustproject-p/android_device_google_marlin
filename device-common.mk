@@ -645,3 +645,10 @@ PRODUCT_PACKAGES += \
 # Update engine
 PRODUCT_PACKAGES += brillo_update_payload
 
+# IMS
+PRODUCT_PACKAGES += \
+    com.android.ims.rcsmanager.xml \
+    com.android.ims.rcsmanager \
+    RcsService \
+    PresencePolling
+
