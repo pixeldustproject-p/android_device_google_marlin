@@ -643,8 +643,6 @@ PRODUCT_PACKAGES := \
     CellBroadcastReceiver \
     CertInstaller \
     DrmProvider \
-    Email \
-	ExactCalculator \
     Gallery2 \
     LatinIME \
     Mms \
