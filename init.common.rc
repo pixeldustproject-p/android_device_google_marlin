@@ -80,7 +80,7 @@ on init
     chown system system /dev/cpuset/application/background/tasks
     chmod 0660 /dev/cpuset/application/background/tasks
 
-    # set default schedTune value for foreground/top-app (only affects EAS)
+    # set default schedTune value for foreground/top-app
     write /dev/stune/foreground/schedtune.prefer_idle 1
     write /dev/stune/top-app/schedtune.boost 10
     write /dev/stune/top-app/schedtune.prefer_idle 1
@@ -144,10 +144,11 @@ on late-fs
 
     # boot time fs tune
     write /sys/block/sda/queue/iostats 0
-    write /sys/block/sda/queue/scheduler cfq
+    write /sys/block/sda/queue/scheduler maple
     write /sys/block/sda/queue/iosched/slice_idle 0
     write /sys/block/sda/queue/read_ahead_kb 2048
     write /sys/block/sda/queue/nr_requests 256
+    write /sys/block/sda/queue/add_random 1
     write /sys/block/dm-0/queue/read_ahead_kb 2048
     write /sys/block/dm-1/queue/read_ahead_kb 2048
 
@@ -336,6 +337,45 @@ on zygote-start
     chown system system /sys/class/devfreq/soc:qcom,gpubw/min_freq
     chmod 0660 /sys/class/devfreq/soc:qcom,gpubw/min_freq
 
+    chown system system /sys/class/timed_output/vibrator/voltage_level
+    chmod 0664 /sys/class/timed_output/vibrator/voltage_level
+
+    chown system system /sys/module/msm_thermal/parameters/enabled
+    chmod 0664 /sys/module/msm_thermal/parameters/enabled
+
+    chown system system /sys/kernel/fast_charge/force_fast_charge
+    chmod 0664 /sys/kernel/fast_charge/force_fast_charge
+
+    # Set schedutil permissions
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor "schedutil"
+    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor "schedutil"
+    write /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor "schedutil"
+    write /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor "schedutil"
+    chown system system /sys/devices/system/cpu/cpu0/cpufreq/schedutil/up_rate_limit_us
+    chown system system /sys/devices/system/cpu/cpu1/cpufreq/schedutil/up_rate_limit_us
+    chown system system /sys/devices/system/cpu/cpu2/cpufreq/schedutil/up_rate_limit_us
+    chown system system /sys/devices/system/cpu/cpu3/cpufreq/schedutil/up_rate_limit_us
+    chown system system /sys/devices/system/cpu/cpu0/cpufreq/schedutil/down_rate_limit_us
+    chown system system /sys/devices/system/cpu/cpu1/cpufreq/schedutil/down_rate_limit_us
+    chown system system /sys/devices/system/cpu/cpu2/cpufreq/schedutil/down_rate_limit_us
+    chown system system /sys/devices/system/cpu/cpu3/cpufreq/schedutil/down_rate_limit_us
+    chown system system /sys/devices/system/cpu/cpu0/cpufreq/schedutil/iowait_boost_enable
+    chown system system /sys/devices/system/cpu/cpu1/cpufreq/schedutil/iowait_boost_enable
+    chown system system /sys/devices/system/cpu/cpu2/cpufreq/schedutil/iowait_boost_enable
+    chown system system /sys/devices/system/cpu/cpu3/cpufreq/schedutil/iowait_boost_enable
+    chmod 0664 /sys/devices/system/cpu/cpu0/cpufreq/schedutil/up_rate_limit_us
+    chmod 0664 /sys/devices/system/cpu/cpu1/cpufreq/schedutil/up_rate_limit_us
+    chmod 0664 /sys/devices/system/cpu/cpu2/cpufreq/schedutil/up_rate_limit_us
+    chmod 0664 /sys/devices/system/cpu/cpu3/cpufreq/schedutil/up_rate_limit_us
+    chmod 0664 /sys/devices/system/cpu/cpu0/cpufreq/schedutil/down_rate_limit_us
+    chmod 0664 /sys/devices/system/cpu/cpu1/cpufreq/schedutil/down_rate_limit_us
+    chmod 0664 /sys/devices/system/cpu/cpu2/cpufreq/schedutil/down_rate_limit_us
+    chmod 0664 /sys/devices/system/cpu/cpu3/cpufreq/schedutil/down_rate_limit_us
+    chmod 0664 /sys/devices/system/cpu/cpu0/cpufreq/schedutil/iowait_boost_enable
+    chmod 0664 /sys/devices/system/cpu/cpu1/cpufreq/schedutil/iowait_boost_enable
+    chmod 0664 /sys/devices/system/cpu/cpu2/cpufreq/schedutil/iowait_boost_enable
+    chmod 0664 /sys/devices/system/cpu/cpu3/cpufreq/schedutil/iowait_boost_enable
+
 on early-boot
     # set RLIMIT_MEMLOCK to 64MB
     setrlimit 8 67108864 67108864
@@ -384,27 +424,36 @@ on early-boot
     chmod 644 /sys/devices/soc/qpnp-fg-17/power_supply/bms/charge_full
 
 on boot
-    # from init.power.sh
-    # disable thermal hotplug to switch governor
-    write /sys/module/msm_thermal/core_control/enabled 0
+    # Set swappiness and cache pressure
+    write /proc/sys/vm/swappiness 5
+    write /proc/sys/vm/vfs_cache_pressure 10
 
     # bring back main cores CPU 0,2
     write /sys/devices/system/cpu/cpu0/online 1
     write /sys/devices/system/cpu/cpu2/online 1
 
-    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 300000
-
-    # EAS: Capping the max frequency of silver core to 1.6GHz
+    # setting the min/max frequency of silver cores
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 307200
     write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 1593600
 
-    write /sys/devices/system/cpu/cpu2/cpufreq/scaling_min_freq 300000
+    # setting the min/max frequency of gold cores
+    write /sys/devices/system/cpu/cpu2/cpufreq/scaling_min_freq 307200
+    write /sys/devices/system/cpu/cpu2/cpufreq/scaling_max_freq 2150400
 
-    # if EAS is present, switch to sched governor (no effect if not EAS)
-    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor "sched"
-    write /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor "sched"
+    # configure governor settings for silver cluster
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor "schedutil"
+    write /sys/devices/system/cpu/cpu0/cpufreq/schedutil/up_rate_limit_us 500
+    write /sys/devices/system/cpu/cpu0/cpufreq/schedutil/down_rate_limit_us 500
+    write /sys/devices/system/cpu/cpu0/cpufreq/schedutil/iowait_boost_enable 1
 
-    # re-enable thermal hotplug
-    write /sys/module/msm_thermal/core_control/enabled 1
+    # configure governor settings for gold cluster
+    write /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor "schedutil"
+    write /sys/devices/system/cpu/cpu2/cpufreq/schedutil/up_rate_limit_us 500
+    write /sys/devices/system/cpu/cpu2/cpufreq/schedutil/down_rate_limit_us 500
+    write /sys/devices/system/cpu/cpu2/cpufreq/schedutil/iowait_boost_enable 1
+
+    # msm_thermal
+    write /sys/module/msm_thermal/parameters/enabled 0
 
     # Setting b.L scheduler parameters
     write /proc/sys/kernel/sched_migration_fixup 1
@@ -414,6 +463,12 @@ on boot
     write /proc/sys/kernel/sched_freq_dec_notify 400000
     write /proc/sys/kernel/sched_spill_nr_run 3
     write /proc/sys/kernel/sched_init_task_load 100
+    # WALT default
+    write /proc/sys/kernel/sched_use_walt_cpu_util 1
+    write /proc/sys/kernel/sched_use_walt_task_util 1
+
+    # CDG congestion control
+    write /proc/sys/net/ipv4/tcp_congestion_control westwood
 
     # Exec init.foreground.sh in background
     start vendor.foreground_sh
@@ -538,6 +593,27 @@ on boot
     chown system system /d/fg_memif/data
     chown system system /d/fg_memif/count
     chown system system /d/fg_memif/address
+
+    # Enable fast charge
+    write /sys/kernel/fast_charge/force_fast_charge 1
+
+    # Set vibrate
+    write /sys/class/timed_output/vibrator/voltage_level 3199
+
+    # Power efficient workqueue
+    chmod 0644 /sys/module/workqueue/parameters/power_efficient
+    write /sys/module/workqueue/parameters/power_efficient Y
+
+    # Hi-perf audio
+    write /sys/module/snd_soc_wcd9330/parameters/high_perf_mode 1
+
+    # Backlight dimmer
+    write /sys/module/mdss_fb/parameters/backlight_dimmer 1
+
+    # Dynamic stune boost
+    write /sys/module/cpu_boost/parameters/dynamic_stune_boost 1
+    write /sys/module/cpu_boost/parameters/input_boost_freq "0:537600 1:0 2:537600 3:0"
+    write /sys/module/cpu_boost/parameters/input_boost_ms 80
 
 on property:wc_transport.start_hci=true
     start vendor.start_hci_filter
@@ -808,13 +884,6 @@ on property:sys.boot_completed=1
     write /dev/cpuset/application/performance/cpus 3
     write /dev/cpuset/application/background/cpus 1
     write /dev/cpuset/application/cpus 1,3
-
-    # end boot time fs tune
-    write /sys/block/sda/queue/read_ahead_kb 512
-    write /sys/block/sda/queue/nr_requests 128
-    write /sys/block/dm-0/queue/read_ahead_kb 128
-    write /sys/block/dm-1/queue/read_ahead_kb 128
-    write /sys/block/sda/queue/iostats 1
 
     # UFS health
     chmod 755 /sys/kernel/debug/ufshcd0
