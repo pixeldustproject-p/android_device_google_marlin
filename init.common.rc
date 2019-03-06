@@ -148,6 +148,7 @@ on late-fs
     write /sys/block/sda/queue/iosched/slice_idle 0
     write /sys/block/sda/queue/read_ahead_kb 2048
     write /sys/block/sda/queue/nr_requests 256
+    write /sys/block/sda/queue/add_random 1
     write /sys/block/dm-0/queue/read_ahead_kb 2048
     write /sys/block/dm-1/queue/read_ahead_kb 2048
 
@@ -424,7 +425,7 @@ on early-boot
 
 on boot
     # Set swappiness and cache pressure
-    write /proc/sys/vm/swappiness 20
+    write /proc/sys/vm/swappiness 5
     write /proc/sys/vm/vfs_cache_pressure 10
 
     # bring back main cores CPU 0,2
@@ -452,7 +453,7 @@ on boot
     write /sys/devices/system/cpu/cpu2/cpufreq/schedutil/iowait_boost_enable 1
 
     # msm_thermal
-    write /sys/module/msm_thermal/parameters/enabled 1
+    write /sys/module/msm_thermal/parameters/enabled 0
 
     # Setting b.L scheduler parameters
     write /proc/sys/kernel/sched_migration_fixup 1
@@ -596,10 +597,8 @@ on boot
     # Enable fast charge
     write /sys/kernel/fast_charge/force_fast_charge 1
 
-    # Vibrations
-    write /sys/class/timed_output/vibrator/vmax_light_mv 3596
-    write /sys/class/timed_output/vibrator/vmax_strong_mv 3596
-    write /sys/android_touch/vib_strength 60
+    # Set vibrate
+    write /sys/class/timed_output/vibrator/voltage_level 3199
 
     # Power efficient workqueue
     chmod 0644 /sys/module/workqueue/parameters/power_efficient
