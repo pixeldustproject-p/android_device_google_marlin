@@ -339,6 +339,9 @@ on zygote-start
     chown system system /sys/class/timed_output/vibrator/voltage_level
     chmod 0664 /sys/class/timed_output/vibrator/voltage_level
 
+    chown system system /sys/module/msm_thermal/parameters/enabled
+    chmod 0664 /sys/module/msm_thermal/parameters/enabled
+
     chown system system /sys/kernel/fast_charge/force_fast_charge
     chmod 0664 /sys/kernel/fast_charge/force_fast_charge
 
@@ -464,7 +467,8 @@ on boot
     write /sys/devices/system/cpu/cpu3/cpufreq/schedutil/down_rate_limit_us 500
     write /sys/devices/system/cpu/cpu3/cpufreq/schedutil/iowait_boost_enable 0
 
-    # KingKernel uses msm_thermal_simple which is kernel based thermal throttling. 
+    # msm_thermal
+    write /sys/module/msm_thermal/parameters/enabled 1
     
     # re-enable thermal hotplug
     write /sys/module/msm_thermal/core_control/enabled 1
