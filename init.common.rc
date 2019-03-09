@@ -466,9 +466,6 @@ on boot
     write /sys/devices/system/cpu/cpu3/cpufreq/schedutil/up_rate_limit_us 500
     write /sys/devices/system/cpu/cpu3/cpufreq/schedutil/down_rate_limit_us 500
     write /sys/devices/system/cpu/cpu3/cpufreq/schedutil/iowait_boost_enable 0
-
-    # msm_thermal
-    write /sys/module/msm_thermal/parameters/enabled Y
     
     # re-enable thermal hotplug
     write /sys/module/msm_thermal/core_control/enabled 1
@@ -910,6 +907,9 @@ on property:sys.boot_completed=1
     chmod 644 /sys/kernel/debug/ufshcd0/stats/req_stats
     chmod 644 /sys/kernel/debug/ufshcd0/stats/query_stats
     chmod 644 /sys/kernel/debug/ufshcd0/stats/err_stats
+
+    # msm_thermal
+    write /sys/module/msm_thermal/parameters/enabled Y
 
     #LED tweaks
     write "170" > /sys/class/leds/blue/max_brightness
