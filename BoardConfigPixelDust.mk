@@ -4,6 +4,7 @@ ANDROID_TOP := $(shell pwd)
 # Inline kernel
 TARGET_KERNEL_CLANG_VERSION := clang-9.0
 TARGET_KERNEL_CLANG_PATH := $(ANDROID_TOP)/prebuilts/clang/host/$(HOST_OS)-x86/$(TARGET_KERNEL_CLANG_VERSION)/bin
+TARGET_KERNEL_CLANG_COMPILE := true
 KERNEL_TOOLCHAIN_PREFIX := aarch64-linux-android-
 TARGET_KERNEL_SOURCE := kernel/google/marlin
 TARGET_KERNEL_CONFIG := king_defconfig
