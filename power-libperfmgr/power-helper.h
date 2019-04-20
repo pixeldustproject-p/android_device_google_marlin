@@ -1,9 +1,10 @@
-/* Copyright (c) 2012, The Linux Foundation. All rights reserved.
+/*
+ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- *     * Redistributions of source code must retain the above copyright
+ * *    * Redistributions of source code must retain the above copyright
  *       notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above
  *       copyright notice, this list of conditions and the following
@@ -24,39 +25,76 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
  * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
  */
 
-#define ATTRIBUTE_VALUE_DELIM ('=')
-#define ATTRIBUTE_STRING_DELIM (";")
+#ifndef __POWER_HELPER_H__
+#define __POWER_HELPER_H__
 
-#define METADATA_PARSING_ERR (-1)
-#define METADATA_PARSING_CONTINUE (0)
-#define METADATA_PARSING_DONE (1)
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-#define MIN(x,y) (((x)>(y))?(y):(x))
+enum stats_type {
+    //Platform Stats
+    RPM_MODE_XO = 0,
+    RPM_MODE_VMIN,
+    RPM_MODE_MAX,
+    XO_VOTERS_START = RPM_MODE_MAX,
+    VOTER_APSS = XO_VOTERS_START,
+    VOTER_MPSS,
+    VOTER_ADSP,
+    VOTER_SLPI,
+    MAX_PLATFORM_STATS,
 
-struct video_encode_metadata_t {
-    int hint_id;
-    int state;
+    //WLAN Stats
+    WLAN_POWER_DEBUG_STATS = 0,
+    MAX_WLAN_STATS,
 };
 
-struct video_decode_metadata_t {
-    int hint_id;
-    int state;
+enum subsystem_type {
+    SUBSYSTEM_WLAN = 0,
+
+    //Don't add any lines after this line
+    SUBSYSTEM_COUNT
 };
 
-struct cam_preview_metadata_t {
-    int hint_id;
-    int state;
+enum wlan_sleep_states {
+    WLAN_STATE_ACTIVE = 0,
+    WLAN_STATE_DEEP_SLEEP,
+
+    //Don't add any lines after this line
+    WLAN_STATES_COUNT
 };
 
-int parse_metadata(char *metadata, char **metadata_saveptr,
-    char *attribute, unsigned int attribute_size,
-    char *value, unsigned int value_size);
-int parse_video_encode_metadata(char *metadata,
-    struct video_encode_metadata_t *video_encode_metadata);
-int parse_video_decode_metadata(char *metadata,
-    struct video_decode_metadata_t *video_decode_metadata);
-int parse_cam_preview_metadata(char *metadata,
-    struct cam_preview_metadata_t *video_decode_metadata);
+enum wlan_power_params {
+    CUMULATIVE_SLEEP_TIME_MS = 0,
+    CUMULATIVE_TOTAL_ON_TIME_MS,
+    DEEP_SLEEP_ENTER_COUNTER,
+    LAST_DEEP_SLEEP_ENTER_TSTAMP_MS,
+
+    //Don't add any lines after this line
+    WLAN_POWER_PARAMS_COUNT
+};
+
+
+#define PLATFORM_SLEEP_MODES_COUNT RPM_MODE_MAX
+
+#define MAX_RPM_PARAMS 2
+#define XO_VOTERS (MAX_PLATFORM_STATS - XO_VOTERS_START)
+#define VMIN_VOTERS 0
+
+struct stat_pair {
+    enum stats_type stat;
+    const char *label;
+    const char **parameters;
+    size_t num_parameters;
+};
+
+int extract_platform_stats(uint64_t *list);
+int extract_wlan_stats(uint64_t *list);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif //__POWER_HELPER_H__
