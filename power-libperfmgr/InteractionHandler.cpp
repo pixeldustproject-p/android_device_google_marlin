@@ -16,7 +16,7 @@
 
 //#define LOG_NDEBUG 0
 
-#define LOG_TAG "android.hardware.power@1.2-service.marlin-libperfmgr"
+#define LOG_TAG "android.hardware.power@1.3-service.marlin-libperfmgr"
 #define ATRACE_TAG (ATRACE_TAG_POWER | ATRACE_TAG_HAL)
 
 #include <fcntl.h>
@@ -29,7 +29,7 @@
 
 #include "InteractionHandler.h"
 
-#define FB_IDLE_PATH "/sys/class/graphics/fb0/idle_state"
+#define FB_IDLE_PATH "/sys/class/drm/card0/device/idle_state"
 #define MAX_LENGTH 64
 
 #define MSINSEC 1000L

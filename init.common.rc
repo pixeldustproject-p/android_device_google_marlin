@@ -598,9 +598,6 @@ service vendor.per_proxy /vendor/bin/pm-proxy
 on property:ro.build.type=userdebug
    write /sys/class/uio/uio1/device/rtel/rtel 1
 
-on property:init.svc.vendor.per_mgr=running
-    start vendor.per_proxy
-
 on property:sys.uidcpupower=*
    write /proc/uid_cpupower/enable 1
 
@@ -806,6 +803,7 @@ on property:sys.post_boot.parsed=1
     chown system system /sys/devices/soc/soc:qcom,cpubw/devfreq/soc:qcom,cpubw/bw_hwmon/hyst_trigger_count
     chown system system /sys/devices/soc/soc:qcom,cpubw/devfreq/soc:qcom,cpubw/bw_hwmon/hist_memory
     chown system system /sys/devices/soc/soc:qcom,cpubw/devfreq/soc:qcom,cpubw/bw_hwmon/hyst_length
+    chown system system /sys/kernel/debug/sched_features
 
 on property:sys.boot_completed=1
     start vendor.power_sh
@@ -869,6 +867,11 @@ on property:sys.boot_completed=1
     setprop fku.profiles 1
     setprop spectrum.support 1
     setprop persist.spectrum.kernel KingKernel
+
+    # Enable PowerHAL hint processing
+    setprop vendor.powerhal.init 1
+
+    start vendor.per_proxy
 
     # Used immediately below
     trigger sys-boot-completed-set

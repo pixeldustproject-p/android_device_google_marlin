@@ -73,6 +73,9 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/symbols/system/lib64/vndk-sp/libz.s
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib/vndk-sp/libz.so)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib64/vndk-sp/libz.so)
 
+# Remove Power HAL 1.2
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/vendor/etc/init/android.hardware.power@1.2-service.marlin-libperfmgr.rc)
+
 # Remove init.recovery.*.rc file in root directory (only needed in recovery root).
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/root/init.recovery.marlin.rc)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/root/init.recovery.sailfish.rc)

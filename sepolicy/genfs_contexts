@@ -91,3 +91,4 @@ genfscon debugfs /cnss-prealloc/status     u:object_r:debugfs_cnss:s0
 genfscon debugfs /ufshcd0                  u:object_r:debugfs_ufs:s0
 genfscon debugfs /fg_memif                 u:object_r:debugfs_fg_sram:s0
 genfscon debugfs /system_stats             u:object_r:debugfs_system_stats:s0
+genfscon debugfs /sched_features           u:object_r:debugfs_sched_features:s0
