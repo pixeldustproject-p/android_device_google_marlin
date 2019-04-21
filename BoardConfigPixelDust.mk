@@ -1,7 +1,7 @@
 # Common board config for marlin, sailfish
 
 # Inline kernel
-TARGET_KERNEL_CLANG_VERSION := 9.0.1
+TARGET_KERNEL_CLANG_VERSION := 9.0.2
 TARGET_KERNEL_CLANG_COMPILE := true
 TARGET_KERNEL_CROSS_COMPILE_PREFIX := aarch64-linux-android-
 TARGET_KERNEL_SOURCE := kernel/google/marlin
